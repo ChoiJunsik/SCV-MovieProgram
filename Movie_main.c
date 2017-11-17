@@ -26,23 +26,25 @@ typedef struct Movie {
 	singleData* title;
 	singleData* genre;
 	singleData* director;
-	singleData* actor;
+	singleData* actor,*actorTail,*actorNew,*actorCur;
 	struct Movie* next;
 } Movie;
 
-Movie* movie = NULL;
-Director* director = NULL;
-Actor* actor = NULL;
+Movie *movie,*movieTail,*movieCur,*movieNew;
+Director *director,*directorTail;
+Actor *actorIndex,*actor;
+
 FILE *mp, *dp, *ap;
 
-int MovieSerialNumber, ActorSerialNumber, DirectorSerialNumber;
+int MovieSerialNumber, ActorSerialNumber, DirectorSerialNumber, MovieCnt, ActorCnt, DirectorCnt;
+
 void add(char*);
 
 int main(void)
 {
-
+	movie=movieTail=movieCur=movieNew=NULL;
 	char* commands, *mda, *option, *num;
-	char* input = (char *)malloc(50);
+	char* input = (char*)malloc(30);
 
 	printf(">> Welcome to My Movie <<\n");
 	printf("File Loading.....\n");
@@ -50,50 +52,81 @@ int main(void)
 	dp = fopen("director_log", "wt");
 	ap = fopen("actor_log", "wt");
 	if (mp == NULL || dp == NULL || ap == NULL) {
-		printf("File Loading Faile!!\n");
+		printf("File Loading Fail!!\n");
 		return -1;
 	}
 	else
 		printf("You can use add, update, delete, search, sort, save , end commands.\n");
-
+	while(1){
 	printf("(movie) ");
   gets(input);
 	commands = strtok(input, " ");
 	mda = strtok(NULL, " ");
-  if (strcmp(commands, "add") == 0)
+  if (strcmp(commands, "add") == 0){
 		                      add(mda);
+													fclose(mp);
+			}
+	}
 	return 0;
 }
 
 void add(char* mda) {
-	printf("check");
 	int year, runTime;
-	++MovieSerialNumber;
+	char* actorCheck;
 	if (strcmp(mda, "m") == 0) {
+		movieNew = (Movie*)malloc(sizeof(Movie));
+		movieNew->actor=movieNew->actorNew=movieNew->actorTail=movieNew->actorCur=NULL;
     char* actorArray = (char*)malloc(100);
-		movie = (Movie *)malloc(sizeof(Movie));
-		movie->serialNumber = MovieSerialNumber;
+		movieNew->serialNumber = MovieSerialNumber;
 		printf("title > ");
-		movie->title = (singleData*)malloc(sizeof(singleData));
-    movie->title->name = (char *)malloc(sizeof(30));
-		gets(movie->title->name);
+		movieNew->title = (singleData*)malloc(sizeof(singleData));
+    movieNew->title->name = (char *)malloc(sizeof(30));
+		gets(movieNew->title->name);
 		printf("genre > ");
-		movie->genre = (singleData*)malloc(sizeof(singleData));
-    movie->genre->name = (char *)malloc(sizeof(20));
-		gets(movie->genre->name);
+		movieNew->genre = (singleData*)malloc(sizeof(singleData));
+    movieNew->genre->name = (char *)malloc(sizeof(30));
+		gets(movieNew->genre->name);
 		printf("director > ");
-		movie->director = (singleData*)malloc(sizeof(singleData));
-    movie->director->name = (char *)malloc(sizeof(30));
+		movieNew->director = (singleData*)malloc(sizeof(singleData));
+    movieNew->director->name = (char *)malloc(sizeof(30));
+		gets(movieNew->director->name);
     printf("year > ");
     scanf("%d",&year);
     printf("run time > ");
     scanf("%d",&runTime);
-		gets(movie->director->name);
+		getchar();
 		printf("actors > ");
-		movie->actor = (singleData*)malloc(sizeof(singleData));
 		gets(actorArray);
-    fprintf(mp, "add:%d:%s:%s:%s:%d:%d:%s", movie->serialNumber, movie->title->name, movie->genre->name, movie->director->name, year, runTime, actorArray);
-    return;
+		movieNew->next = NULL;
+
+		fprintf(mp, "add:%d:%s:%s:%s:%d:%d:%s", movieNew->serialNumber, movieNew->title->name, movieNew->genre->name, movieNew->director->name, year, runTime, actorArray);
+
+		movieNew->actorNew = (singleData*)malloc(sizeof(singleData));
+		movieNew->actorNew->name = strtok(actorArray, ",");      // " " 공백 문자를 기준으로 문자열을 자름, 포인터 반환
+		//정리
+			movieNew->actor = movieNew->actorNew;
+			movieNew->actorTail = movieNew->actorNew;
+		//
+
+		while (1) // actor 연결리스트에 넣는 과정
+		{
+		actorCheck=strtok(NULL,",");
+		if(actorCheck == 0) {break;}
+		else if(*actorCheck == ' '){continue;}
+		movieNew->actorNew = (singleData*)malloc(sizeof(singleData));
+    movieNew->actorNew->name = actorCheck;
+
+		movieNew->actorTail->next = movieNew->actorNew;
+		movieNew->actorTail = movieNew->actorNew;
 	}
 
-}
+		if(movie==NULL)
+			movie = movieNew;
+		else
+			movieTail->next = movieNew;
+
+			movieTail = movieNew;
+		puts("@@ Done");
+		} // add 함수의 끝
+	return ;
+	}
