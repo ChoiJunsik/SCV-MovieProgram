@@ -41,8 +41,10 @@ int MovieSerialNumber, ActorSerialNumber, DirectorSerialNumber; //고유번호
 void add(char*);
 void loadMovielogs(void);
 void loadDirectorlogs(void);
+void loadActorlogs(void);
 Movie* addSameMovie(void);
 Director* addSameDirector(void);
+Actor* addSameActor(void);
 char* changeColon(char*);
 char* changeLogColon(char*);
 ////main
@@ -57,6 +59,7 @@ int main(void)
 	printf("File Loading.....\n"); //로그로부터 연결리스트 구조체 생성
   loadMovielogs();
   loadDirectorlogs();
+	loadActorlogs();
 	printf("You can use add, update, delete, search, sort, save , end commands.\n");
 	while(1){
 		mp = fopen("movie_log", "at");
@@ -82,6 +85,7 @@ void add(char* mda) {
 	char* YorN; // 같은 내용의 구조체가 있을 시 물어보기 용
 	Movie* ifSameM; // 같은 내용의 구조체 주소 값 받는 변수
   Director* ifSameD;
+	Actor* ifSameA;
   if (strcmp(mda, "m") == 0) {
     ++MovieSerialNumber;//// add 호출시 전역변수로 선언된 고유번호 하나 증가
 		movieNew = (Movie*)malloc(sizeof(Movie)); // 무비 구조체 메모리 할당
@@ -338,7 +342,133 @@ void add(char* mda) {
               puts("@@ Done");
              free(titleArray);   }//director 받는 과정,samerecord 답이 yes일 경우
       fclose(dp); // add후 파일 닫아서 기록
-    }//director일 경우
+		}//director일 경우
+		if (strcmp(mda, "a") == 0) {
+		  ++ActorSerialNumber;
+		  actorNew = (Actor*)malloc(sizeof(Actor)); // 무비 구조체 메모리 할당
+		  actorNew->title=actorNew->titleNew=actorNew->titleTail=actorNew->titleCur=NULL; //title 연결리스트 위한 변수 NULL배정
+		  titleArray = (char*)malloc(255); // title 명단 받기 위한 메모리 할당
+		  actorNew->serialNumber = ActorSerialNumber; //고유 번호 할당
+		  printf("actor > ");
+		  actorNew->actor = (singleData*)malloc(sizeof(singleData));
+		  actorNew->actor->name = (char *)malloc(30);
+		  gets(actorNew->actor->name); // genre받는 과정
+		  printf("sex > ");
+		  scanf("%c", &(actorNew->sex));
+		  while (getchar() != '\n');
+		  printf("birth > ");
+		  actorNew->birth = (singleData*)malloc(sizeof(singleData));
+		  actorNew->birth->name = (char *)malloc(30);
+		  gets(actorNew->birth->name); /// title 받는 과정
+		  printf("titles > ");
+		  gets(titleArray); // actor 받는 과정
+
+		  actorNew->next = NULL; // actorNew 구조체는 NULL을 가리키고 있음
+
+		  actorNew->titleNew = (singleData*)malloc(sizeof(singleData));// actorNew 안 titleNew 연결리스트 생성
+		  actorNew->titleNew->name = (char *)malloc(30);
+		  strcpy(actorNew->titleNew->name,strtok(titleArray, ",")); //배우 명단에서 , 을 \0로 만들고 거기까지 titleNew구조체에 카피
+
+		  actorNew->titleNew->next = NULL; //actorNew 안 titleNew 구조체는 NULL을 가리키고 있음
+
+		  actorNew->title = actorNew->titleNew; //title(head)가 titleNew을 가리킴
+		  actorNew->titleTail = actorNew->titleNew; // Tail이 titleNew을 가리킴 (구조체 하나 연결리스트)
+
+		  while (1){ // title 연결리스트에 넣는 과정
+
+		  titleCheck=strtok(NULL,","); // 배우 명단 ,->\0 만들고 \0 다음 주소 값 titleCheck에 배정
+
+		  if(titleCheck == 0) {break;} // 배우 명단을 다 받을 경우 0을 배정하는데 그런 경우 배정과정 탈출
+		  else if(*titleCheck == ' '){++titleCheck;} // ,다음 공백 있을 경우 다음 주소로 넘어가기
+
+		  actorNew->titleNew = (singleData*)malloc(sizeof(singleData)); //actorNew 안 새로운 titleNew 연결리스트 생성
+		  actorNew->titleNew->name = (char *)malloc(30);
+		  strcpy(actorNew->titleNew->name,titleCheck); // 2번째배우 이후 배우 카피
+		  actorNew->titleNew->next = NULL; //새로 만든 titleNew 구조체는 NULL을 가리키고 있음
+
+		  actorNew->titleTail->next = actorNew->titleNew; //기존 구조체가 NULL에서 새로 만든 구조체 가리킴
+		  actorNew->titleTail = actorNew->titleNew; //Tail은 새로 만든 구조체 가리킴
+		}// 이 과정을 거치면 title 연결리스트 완성
+
+		///////////////////////////////////////////////////////////////////////////////actor에 추가할 새로운 구조체 생성파트는 여기까지
+		  ifSameA = (Actor*)addSameActor(); // NULL일 경우 정상진행 / NULL이 아닐 경우 ifSameA주소값 변수 이용 루트
+		  if(ifSameA!=NULL){
+		    printf("@@ You have the same record in actor list.\n");
+		    printf("%d:%s:%c:%s:", ifSameA->serialNumber, ifSameA->actor->name, ifSameA->sex, ifSameA->birth->name);
+
+		    ifSameA->titleCur = ifSameA->title; //titleCur(참조용변수)가 Head가 가리키고 있는 구조체를 가리킴
+
+		    printf("%s", ifSameA->titleCur->name);   // 첫 번째 title 출력
+
+		    while(ifSameA->titleCur->next != NULL)    // 마지막 title구조체변수까지 while문은 돈다.
+		    {
+		      ifSameA->titleCur = ifSameA->titleCur->next; //참조용 변수가 다음 구조체를 가리킴
+		      printf(", %s", ifSameA->titleCur->name); //두 번째 이후 title 출력
+		    }
+
+		    printf("\n");
+		    printf("@@ Do you want to add any way? ");
+		    YorN=(char*)malloc(10);
+		    gets(YorN);
+		    if(strcmp(YorN,"No")==0||strcmp(YorN,"NO")==0||strcmp(YorN,"no")==0||strcmp(YorN,"nO")==0){
+		                                                   printf("\n");
+		                                                   free(titleArray);
+		                                                   free(YorN);
+		                                                   --ActorSerialNumber;
+		                                                   return;}
+		    else{
+		        ///////////////////////////////////
+		            if(actor==NULL)//연결리스트 초기 생성 단계
+		              actor = actorNew; //actor(head)가 actorNew를 가리킴
+		            else
+		              actorTail->next = actorNew; //기존 연결리스트가 있다면 Tail이 가리키고 있는 연결리스트가 actorNew를 가리킴
+
+		              actorTail = actorNew; //Tail도 actorNew를 가리킴 (연결리스트 연결)
+
+		            fprintf(ap, "add:%d:%s:%c:%s:", actorNew->serialNumber, changeColon(actorNew->actor->name), actorNew->sex, changeColon(actorNew->birth->name));
+
+		            actorNew->titleCur = actorNew->title; //titleCur(참조용변수)가 Head가 가리키고 있는 구조체를 가리킴
+
+		            fprintf(ap,"%s", changeColon(actorNew->titleCur->name));   // 첫 번째 title 출력
+
+		            while(actorNew->titleCur->next != NULL)    // 마지막 title구조체변수까지 while문은 돈다.
+		            {
+		              actorNew->titleCur = actorNew->titleCur->next; //참조용 변수가 다음 구조체를 가리킴
+		              fprintf(ap,", %s", changeColon(actorNew->titleCur->name)); //두 번째 이후 title 출력
+		            }
+
+		            fprintf(ap,"\n"); // log에 저장하면 개행시킴
+		              puts("@@ Done");
+		             free(titleArray);
+		             free(YorN);}//actor 받는 과정,samerecord 답이 yes일 경우
+		           }//ifSameA이 주소 값일 경우
+		 else{
+		     ///////////////////////////////////
+		         if(actor==NULL)//연결리스트 초기 생성 단계
+		           actor = actorNew; //actor(head)가 actorNew를 가리킴
+		         else
+		           actorTail->next = actorNew; //기존 연결리스트가 있다면 Tail이 가리키고 있는 연결리스트가 actorNew를 가리킴
+
+		           actorTail = actorNew; //Tail도 actorNew를 가리킴 (연결리스트 연결)
+
+		         fprintf(ap, "add:%d:%s:%c:%s:", actorNew->serialNumber, changeColon(actorNew->actor->name), actorNew->sex, changeColon(actorNew->birth->name));
+
+		         actorNew->titleCur = actorNew->title; //titleCur(참조용변수)가 Head가 가리키고 있는 구조체를 가리킴
+
+		         fprintf(ap,"%s", changeColon(actorNew->titleCur->name));   // 첫 번째 title 출력
+
+		         while(actorNew->titleCur->next != NULL)    // 마지막 title구조체변수까지 while문은 돈다.
+		         {
+		           actorNew->titleCur = actorNew->titleCur->next; //참조용 변수가 다음 구조체를 가리킴
+		           fprintf(ap,", %s", changeColon(actorNew->titleCur->name)); //두 번째 이후 title 출력
+		         }
+
+		         fprintf(ap,"\n"); // log에 저장하면 개행시킴
+		           puts("@@ Done");
+		          free(titleArray);   }//actor 받는 과정,samerecord 답이 yes일 경우
+		   fclose(ap); // add후 파일 닫아서 기록
+		 }//actor일 경우
+
 
 }//함수 종료
 ///////////////
@@ -511,6 +641,88 @@ void loadDirectorlogs(void){
   }//while문 끝
   fclose(dp);
 }
+void loadActorlogs(void){
+	int fileSize;
+	ap = fopen("actor_log", "rt");//함수 호출시 읽기용으로 파일을 연다
+	if(ap==NULL)
+      return; // 파일이 없어서 새로 생성한 경우
+	fseek(ap,0L,SEEK_END);
+	fileSize = ftell(ap);
+	if(fileSize==0){return;}
+	rewind(ap);
+	char* keyword; // 파일 한줄 읽어오기용 변수
+  char *check,*titleCheck;
+	while(1){
+		if(ftell(ap)==fileSize) {break;}
+		keyword =(char*)malloc(255); // 파일 한줄 읽기 위해 메모리 동적할당
+		fgets(keyword,255,ap); //읽었다.
+		strtok(keyword,"\n");//개행을 \0으로 바꾼다.
+    check = strtok(keyword,":");//keyword배열에서 첫번째 :을 \0으로 바꾼다,check가 tag를 가리킨다.
+
+  	if(strcmp(check,"add")==0){ //tag가 add일 때.
+
+			actorNew = (Actor*)malloc(sizeof(Actor)); //actorNew구조체 형성
+			actorNew->title=actorNew->titleNew=actorNew->titleTail=actorNew->titleCur=NULL; //title 연결리스트 위한 변수들 NULL배정
+			check = strtok(NULL,":"); //keyword배열에서 serialNumber 추출
+			actorNew->serialNumber = (int)atoi(check);//고유번호 저장
+			ActorSerialNumber = (actorNew->serialNumber);//add시 고유번호 중복할당 방지
+
+			actorNew->actor = (singleData*)malloc(sizeof(singleData));
+	    actorNew->actor->name = (char *)malloc(30);
+			check = strtok(NULL,":");
+			strcpy(actorNew->actor->name,check);//title 이름 삽입
+      strcpy(actorNew->actor->name,changeLogColon(actorNew->actor->name));
+
+      check = strtok(NULL,":");
+      actorNew->sex = *check;
+
+			actorNew->birth = (singleData*)malloc(sizeof(singleData));
+	    actorNew->birth->name = (char *)malloc(30);
+			check = strtok(NULL,":");
+			strcpy(actorNew->birth->name,check); //장르 삽입
+      strcpy(actorNew->birth->name,changeLogColon(actorNew->birth->name));
+
+			actorNew->next = NULL; //새로 만들어진 actorNew는 NULL가리킴
+
+			actorNew->titleNew = (singleData*)malloc(sizeof(singleData));
+			actorNew->titleNew->name = (char *)malloc(30);
+			strcpy(actorNew->titleNew->name,strtok(NULL, ",")); //첫 번째 배우 이름 삽입
+			strcpy(actorNew->titleNew->name,changeLogColon(actorNew->titleNew->name));
+
+			actorNew->title = actorNew->titleNew;
+			actorNew->titleTail = actorNew->titleNew; //첫 번째 구조체 연결
+			//
+			while (1) // 두 번째 이후 구조체 title 연결리스트에 넣는 과정
+			{
+			titleCheck=strtok(NULL,","); //// 배우 명단 ,->\0 만들고 \0 다음 주소 값 titleCheck에 배정
+			//printf("1%s",titleCheck);
+			if(titleCheck == 0) {break;}//// 배우 명단을 다 받을 경우 0을 배정하는데 그런 경우 배정과정 탈출
+			else if(*titleCheck == ' '){++titleCheck;}//// ,다음 공백 있을 경우 다음 주소로 넘어가기
+
+      actorNew->titleNew = (singleData*)malloc(sizeof(singleData)); ////actorNew 안 새로운 titleNew 연결리스트 생성
+			actorNew->titleNew->name = (char *)malloc(30);
+	    strcpy(actorNew->titleNew->name,titleCheck);// // 2번째배우 이후 배우 카피
+      strcpy(actorNew->titleNew->name,changeLogColon(actorNew->titleNew->name));
+
+
+      actorNew->titleNew->next = NULL; //새로 만든 titleNew 구조체는 NULL을 가리키고 있음
+
+      actorNew->titleTail->next = actorNew->titleNew; //기존 구조체가 NULL에서 새로 만든 구조체 가리킴
+			actorNew->titleTail = actorNew->titleNew; ////Tail은 새로 만든 구조체 가리킴
+		}//// 이 과정을 거치면 title 연결리스트 완성
+
+    if(actor==NULL)//연결리스트 초기 생성 단계
+    			actor = actorNew; //actor(head)가 actorNew를 가리킴
+    		else
+    			actorTail->next = actorNew; //기존 연결리스트가 있다면 Tail이 가리키고 있는 연결리스트가 actorNew를 가리킴
+
+    			actorTail = actorNew; //Tail도 actorNew를 가리킴 (연결리스트 연결)
+		}//if문 끝
+    free(keyword);
+  }//while문 끝
+  fclose(ap);
+}
+
 ///////////////파일 불러오기
 
 Movie* addSameMovie(void){
@@ -641,6 +853,67 @@ Director* addSameDirector(void){
 								}
 	}
 return NULL;}
+
+Actor* addSameActor(void){
+	int cnt=0;
+	if(actor == NULL)
+			{return NULL;}////비교할 구조체 없을 경우 NULL 리턴
+
+		actorCur = actor; //첫 번째 구조체 비교하기 위해 헤드를 참조변수에 배정
+
+		if(actorCur->sex != actorNew->sex)
+																					++cnt;
+		else if(strcmp(actorCur->actor->name,actorNew->actor->name)!=0)
+																					++cnt;
+		else if(strcmp(actorCur->birth->name,actorNew->birth->name)!=0)
+																					++cnt;
+
+    actorCur->titleCur = actorCur->title;
+    actorNew->titleCur = actorNew->title;
+
+
+		if(strcmp(actorCur->titleCur->name,actorNew->titleCur->name)!=0)
+																					 ++cnt;
+
+		while(actorCur->titleCur->next != NULL){
+								actorCur->titleCur = actorCur->titleCur->next;
+								actorNew->titleCur = actorNew->titleCur->next;
+    						if(strcmp(actorCur->titleCur->name,actorNew->titleCur->name)!=0)
+																				++cnt;}
+
+	  if(cnt==0)
+				return actorCur;
+		else{
+/////////
+		while(actorCur->next != NULL)    // 두 번째 구조체부터 비교(title제외)
+		{
+			actorCur = actorCur->next;
+
+      if(actorCur->sex != actorNew->sex)
+  																					++cnt;
+  		else if(strcmp(actorCur->actor->name,actorNew->actor->name)!=0)
+  																					++cnt;
+  		else if(strcmp(actorCur->birth->name,actorNew->birth->name)!=0)
+  																					++cnt;
+
+			actorCur->titleCur = actorCur->title;
+			actorNew->titleCur = actorNew->title;
+
+			if(strcmp(actorCur->titleCur->name,actorNew->titleCur->name)!=0)
+																							++cnt;
+			while(actorCur->titleCur->next != NULL){
+									actorCur->titleCur = actorCur->titleCur->next;
+									actorNew->titleCur = actorNew->titleCur->next;
+									if(strcmp(actorCur->titleCur->name,actorNew->titleCur->name)!=0)
+																							++cnt;
+						}
+			if(cnt == 0) {return actorCur;}
+	      					else {cnt = 0;}
+
+								}
+	}
+return NULL;}
+
 /////
 char* changeColon(char* ifColon){
     char* tmp = (char*)malloc(30);
