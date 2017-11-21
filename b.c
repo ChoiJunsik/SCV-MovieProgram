@@ -4,9 +4,9 @@
 typedef struct singleData {
 	char* name;
 	struct singleData* next;
-  struct Movie* linkAnotherM;
-  struct Director* linkAnotherD;
-  struct Actor* linkAnotherA;
+	struct Movie* linkAnotherM;
+	struct Director* linkAnotherD;
+	struct Actor* linkAnotherA;
 } singleData;
 typedef struct Director {
 	int serialNumber;
@@ -51,6 +51,8 @@ Actor* addSameActor(void);
 char* changeColon(char*);
 char* changeLogColon(char*);
 void linkAnotherMovie(void);
+void linkAnotherDirector(void);
+void linkAnotherActor(void);
 ////main
 int main(void)
 {
@@ -64,8 +66,9 @@ int main(void)
 	loadMovielogs();
 	loadDirectorlogs();
 	loadActorlogs();
-  linkAnotherMovie();
-	printf("%s %s\n\n",movie->next->director->linkAnotherD->director->name,movie->next->actor->next->linkAnotherA->actor->name);
+	linkAnotherMovie();
+	linkAnotherDirector();
+	linkAnotherActor();
 	printf("You can use add, update, delete, search, sort, save , end commands.\n");
 	while (1) {
 		mp = fopen("movie_log", "at");
@@ -1203,9 +1206,9 @@ void linkAnotherMovie(void) {
 			}
 		}
 		movieCur->actorCur = movieCur->actorCur->next;
-    actorCur = actor;
+		actorCur = actor;
 	}
-//엑터 연결과정
+	//엑터 연결과정
 	movieCur = movie;
 	directorCur = director;
 	actorCur = actor;
@@ -1215,47 +1218,203 @@ void linkAnotherMovie(void) {
 	{
 		movieCur = movieCur->next;
 
-    if (strcmp(movieCur->director->name, directorCur->director->name) == 0)
-  		movieCur->director->linkAnotherD = directorCur;
-  	else {
-  		while (directorCur->next != NULL) {
-  			directorCur = directorCur->next;
-  			if (strcmp(movieCur->director->name, directorCur->director->name) == 0)
-  				movieCur->director->linkAnotherD = directorCur;
-  		}
-  	}
-  	directorCur = director;
-  	///디렉터 연결 과정
+		if (strcmp(movieCur->director->name, directorCur->director->name) == 0)
+			movieCur->director->linkAnotherD = directorCur;
+		else {
+			while (directorCur->next != NULL) {
+				directorCur = directorCur->next;
+				if (strcmp(movieCur->director->name, directorCur->director->name) == 0)
+					movieCur->director->linkAnotherD = directorCur;
+			}
+		}
+		directorCur = director;
+		///디렉터 연결 과정
 
-  	movieCur->actorCur = movieCur->actor;
+		movieCur->actorCur = movieCur->actor;
 
-  	if (movieCur->actorCur->next != NULL)
-  		++actorCurCnt;
-  	movieCur->actorCur = movieCur->actorCur->next;
-  	if (actorCurCnt > 0) {
-  		while (movieCur->actorCur->next != NULL) {
-  			movieCur->actorCur = movieCur->actorCur->next;
-  			++actorCurCnt;
-  		}
-  	}
-  	movieCur->actorCur = movieCur->actor;
-  	//현재 무비 구조체의 actor 개수 세기
+		if (movieCur->actorCur->next != NULL)
+			++actorCurCnt;
+		movieCur->actorCur = movieCur->actorCur->next;
+		if (actorCurCnt > 0) {
+			while (movieCur->actorCur->next != NULL) {
+				movieCur->actorCur = movieCur->actorCur->next;
+				++actorCurCnt;
+			}
+		}
+		movieCur->actorCur = movieCur->actor;
+		//현재 무비 구조체의 actor 개수 세기
 
-  	for (int i = 0; i <= actorCurCnt; ++i) { //actor개수 만큼 비교
-  		if (strcmp(movieCur->actorCur->name, actorCur->actor->name) == 0)
-  			movieCur->actorCur->linkAnotherA = actorCur;
-  		else {
-  			while (actorCur->next != NULL) {
-  				actorCur = actorCur->next;
-  				if (strcmp(movieCur->actorCur->name, actorCur->actor->name) == 0)
-  					movieCur->actorCur->linkAnotherA = actorCur;
-  			}
-  		}
-  		movieCur->actorCur = movieCur->actorCur->next;
-      actorCur = actor;
-  	}
+		for (int i = 0; i <= actorCurCnt; ++i) { //actor개수 만큼 비교
+			if (strcmp(movieCur->actorCur->name, actorCur->actor->name) == 0)
+				movieCur->actorCur->linkAnotherA = actorCur;
+			else {
+				while (actorCur->next != NULL) {
+					actorCur = actorCur->next;
+					if (strcmp(movieCur->actorCur->name, actorCur->actor->name) == 0)
+						movieCur->actorCur->linkAnotherA = actorCur;
+				}
+			}
+			movieCur->actorCur = movieCur->actorCur->next;
+			actorCur = actor;
+		}
 
 
-  }//while문
+	}//while문
 
+}//함수 끝
+void linkAnotherDirector(void) {
+	int titleCurCnt = 0;
+	if (director == NULL)
+	{
+		return;
+	}////비교할 구조체 없을 경우 NULL 리턴
+	 //Movie 첫 번째 구조체 기준 비교
+	movieCur = movie;
+	directorCur = director;
+
+	directorCur->titleCur = directorCur->title;
+
+	if (directorCur->titleCur->next != NULL)
+		++titleCurCnt;
+	directorCur->titleCur = directorCur->titleCur->next;
+	if (titleCurCnt > 0) {
+		while (directorCur->titleCur->next != NULL) {
+			directorCur->titleCur = directorCur->titleCur->next;
+			++titleCurCnt;
+		}
+	}
+
+	directorCur->titleCur = directorCur->title;
+	//현재 무비 구조체의 title 개수 세기
+
+	for (int i = 0; i <= titleCurCnt; ++i) { //title개수 만큼 비교
+		if (strcmp(directorCur->titleCur->name, movieCur->title->name) == 0)
+			directorCur->titleCur->linkAnotherM = movieCur;
+		else {
+			while (movieCur->next != NULL) {
+				movieCur = movieCur->next;
+				if (strcmp(directorCur->titleCur->name, movieCur->title->name) == 0)
+					directorCur->titleCur->linkAnotherM = movieCur;
+			}
+		}
+		directorCur->titleCur = directorCur->titleCur->next;
+		movieCur = movie;
+	}
+	//타이틀 연결과정
+	movieCur = movie;
+	directorCur = director;
+
+	titleCurCnt = 0;
+
+	while (directorCur->next != NULL)    // 두 번째 구조체부터 비교(title제외)
+	{
+		directorCur = directorCur->next;
+
+		directorCur->titleCur = directorCur->title;
+
+		if (directorCur->titleCur->next != NULL)
+			++titleCurCnt;
+		directorCur->titleCur = directorCur->titleCur->next;
+		if (titleCurCnt > 0) {
+			while (directorCur->titleCur->next != NULL) {
+				directorCur->titleCur = directorCur->titleCur->next;
+				++titleCurCnt;
+			}
+		}
+
+		directorCur->titleCur = directorCur->title;
+		//현재 무비 구조체의 title 개수 세기
+
+		for (int i = 0; i <= titleCurCnt; ++i) { //title개수 만큼 비교
+			if (strcmp(directorCur->titleCur->name, movieCur->title->name) == 0)
+				directorCur->titleCur->linkAnotherM = movieCur;
+			else {
+				while (movieCur->next != NULL) {
+					movieCur = movieCur->next;
+					if (strcmp(directorCur->titleCur->name, movieCur->title->name) == 0)
+						directorCur->titleCur->linkAnotherM = movieCur;
+				}
+			}
+			directorCur->titleCur = directorCur->titleCur->next;
+			movieCur = movie;
+		}
+	}//while문
+}//함수 끝
+void linkAnotherActor(void) {
+	int titleCurCnt = 0;
+	if (actor == NULL)
+	{
+		return;
+	}////비교할 구조체 없을 경우 NULL 리턴
+	 //Movie 첫 번째 구조체 기준 비교
+	movieCur = movie;
+	actorCur = actor;
+
+	actorCur->titleCur = actorCur->title;
+
+	if (actorCur->titleCur->next != NULL)
+		++titleCurCnt;
+	actorCur->titleCur = actorCur->titleCur->next;
+	if (titleCurCnt > 0) {
+		while (actorCur->titleCur->next != NULL) {
+			actorCur->titleCur = actorCur->titleCur->next;
+			++titleCurCnt;
+		}
+	}
+
+	actorCur->titleCur = actorCur->title;
+	//현재 무비 구조체의 title 개수 세기
+
+	for (int i = 0; i <= titleCurCnt; ++i) { //title개수 만큼 비교
+		if (strcmp(actorCur->titleCur->name, movieCur->title->name) == 0)
+			actorCur->titleCur->linkAnotherM = movieCur;
+		else {
+			while (movieCur->next != NULL) {
+				movieCur = movieCur->next;
+				if (strcmp(actorCur->titleCur->name, movieCur->title->name) == 0)
+					actorCur->titleCur->linkAnotherM = movieCur;
+			}
+		}
+		actorCur->titleCur = actorCur->titleCur->next;
+		movieCur = movie;
+	}
+	//타이틀 연결과정
+	movieCur = movie;
+	actorCur = actor;
+
+	titleCurCnt = 0;
+
+	while (actorCur->next != NULL)    // 두 번째 구조체부터 비교(title제외)
+	{
+		actorCur = actorCur->next;
+
+		actorCur->titleCur = actorCur->title;
+
+		if (actorCur->titleCur->next != NULL)
+			++titleCurCnt;
+		actorCur->titleCur = actorCur->titleCur->next;
+		if (titleCurCnt > 0) {
+			while (actorCur->titleCur->next != NULL) {
+				actorCur->titleCur = actorCur->titleCur->next;
+				++titleCurCnt;
+			}
+		}
+
+		actorCur->titleCur = actorCur->title;
+		//현재 무비 구조체의 title 개수 세기
+
+		for (int i = 0; i <= titleCurCnt; ++i) { //title개수 만큼 비교
+			if (strcmp(actorCur->titleCur->name, movieCur->title->name) == 0)
+				actorCur->titleCur->linkAnotherM = movieCur;
+			else {
+				while (movieCur->next != NULL) {
+					movieCur = movieCur->next;
+					if (strcmp(actorCur->titleCur->name, movieCur->title->name) == 0)
+						actorCur->titleCur->linkAnotherM = movieCur;
+				}
+			}
+			actorCur->titleCur = actorCur->titleCur->next;
+			movieCur = movie;
+		}
+	}//while문
 }//함수 끝
