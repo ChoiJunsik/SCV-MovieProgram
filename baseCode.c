@@ -61,6 +61,7 @@ int main(void)
 	printf("File Loading.....\n"); //로그로부터 연결리스트 구조체 생성
 	loadMovielogs();
 	loadDirectorlogs();
+	loadActorlogs();
 	printf("You can use add, update, delete, search, sort, save , end commands.\n");
 	while (1) {
 		mp = fopen("movie_log", "at");
@@ -76,11 +77,11 @@ int main(void)
 			add(mda);
 			//printf("add:%d:%s:%s:%s:%d:%d:%s, %s\n", movie->serialNumber, movie->title->name, movie->genre->name, movie->director->name, movie->year, movie->runTime,movie->actor->name,movie->actor->next->name);
 		}
-//		else if (strcmp(commands, "update") == 0)
+		free(input); //해제시킨후 다시 받기
+		//		else if (strcmp(commands, "update") == 0)
 //			update(mda, option);
 //		else if (strcmp(commands, "delete") == 0)
 //			delete(mda, option);
-		free(input); //해제시킨후 다시 받기
 	}
 
 	return 0;
