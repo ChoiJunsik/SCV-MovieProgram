@@ -1182,7 +1182,7 @@ void linkAnotherMovie(void) {
 	movieCur = movie;
 	directorCur = director;
 	actorCur = actor;
-
+if(director != NULL){
 	if (strcmp(movieCur->director->name, directorCur->director->name) == 0)
 		movieCur->director->linkAnotherD = directorCur;
 	else {
@@ -1193,7 +1193,8 @@ void linkAnotherMovie(void) {
 		}
 	}
 	directorCur = director;
-
+}
+if(actor != NULL){
 	movieCur->actorCur = movieCur->actor;
 
 	if (movieCur->actorCur->next != NULL)
@@ -1222,7 +1223,7 @@ void linkAnotherMovie(void) {
 		movieCur->actorCur = movieCur->actorCur->next;
 		actorCur = actor;
 	}
-
+}
 
 	movieCur = movie;
 	directorCur = director;
@@ -1232,7 +1233,7 @@ void linkAnotherMovie(void) {
 	while (movieCur->next != NULL)
 	{
 		movieCur = movieCur->next;
-
+		if(director!=NULL){
 		if (strcmp(movieCur->director->name, directorCur->director->name) == 0)
 			movieCur->director->linkAnotherD = directorCur;
 		else {
@@ -1243,9 +1244,8 @@ void linkAnotherMovie(void) {
 			}
 		}
 		directorCur = director;
-
-
-
+  }
+ 	if(actor != NULL){
 		movieCur->actorCur = movieCur->actor;
 
 		if (movieCur->actorCur->next != NULL)
@@ -1275,13 +1275,13 @@ void linkAnotherMovie(void) {
 		}
 
 		actorCurCnt = 0;
-
+	}
 	}
 
 }
 void linkAnotherDirector(void) {
 	int titleCurCnt = 0;
-	if (director == NULL)
+	if (director == NULL||movie==NULL)
 	{
 		return;
 	}
@@ -1360,7 +1360,7 @@ void linkAnotherDirector(void) {
 }
 void linkAnotherActor(void) {
 	int titleCurCnt = 0;
-	if (actor == NULL)
+	if (actor == NULL||movie==NULL)
 	{
 		return;
 	}
