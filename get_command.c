@@ -1,3 +1,4 @@
+
 void get_command(char* input)
 {
 	char* commands, *mda, *option, *num;
@@ -14,22 +15,28 @@ void get_command(char* input)
 		fclose(mp);
 	}
 	else if (strcmp(commands, "update") == 0){
-
+    printf("업데이트 코드");
+    exit(1);
 	}
 	else if (strcmp(commands, "delete") == 0){
-
+    printf("딜리트 코드");
+    exit(1);
 	}
 	else if (strcmp(commands, "search") == 0){
-
+    printf("서치 코드");
+    exit(1);
 	}
 	else if (strcmp(commands, "print") == 0){
-
+    printf("프린트 코드");
+    exit(1);
 	}
 	else if (strcmp(commands, "sort") == 0){
-
+    printf("소트 코드");
+    exit(1);
 	}
 	else if (strcmp(commands, "save") == 0){
-
+    printf("세이브 코드");
+    exit(1);
 	}
 	else if (strcmp(commands, "end") == 0){
 		exit(1);
