@@ -95,7 +95,7 @@ void sort(char* mda, char* option, char* fileName) {
 						else if (strcmp(option, "a") == 0)
 							qsort(sortMovie, cnt, sizeof(Movie*), compareActor);
 					}
-				}
+				}// for문 마지막에 주소 값이 변경되는 기이한 현상, 고로 하드코딩으로 대처..
 				fprintf(smp, "%d:%s:%s:%s:%d:%d:", (*(sortMovie + i))->serialNumber, (*(sortMovie + i))->title->name, (*(sortMovie + i))->genre->name, (*(sortMovie + i))->director->name, (*(sortMovie + i))->year, (*(sortMovie + i))->runTime);
 
 				(*(sortMovie + i))->actorCur = (*(sortMovie + i))->actor;
@@ -114,8 +114,191 @@ void sort(char* mda, char* option, char* fileName) {
 			fclose(smp);
 
 		}
-	}
+	}//movie일때
+	else if (strcmp(mda, "d") == 0) {
+		if (director == NULL) {
+			printf("No such record!!\n");
+			return;
+		}
+		directorCur = director;
+		while (directorCur != NULL) {
+			++cnt;
+			directorCur = directorCur->next;
+		}
+
+		directorCur = director;
+		sortDirector = (Director**)malloc(cnt);
+
+		for (int i = 0; i < cnt; ++i) {
+			*(sortDirector + i) = directorCur;
+
+			directorCur = directorCur->next;
+		}
+		if (option == 0)
+			qsort(sortDirector, cnt, sizeof(Director*), compareNameD);
+		else {
+			if (strcmp(option, "n") == 0)
+				qsort(sortDirector, cnt, sizeof(Director*), compareNameD);
+			else if (strcmp(option, "s") == 0)
+				qsort(sortDirector, cnt, sizeof(Director*), compareSexD);
+			else if (strcmp(option, "b") == 0)
+				qsort(sortDirector, cnt, sizeof(Director*), compareBirthD);
+			else if (strcmp(option, "m") == 0)
+				qsort(sortDirector, cnt, sizeof(Director*), compareMovieD);
+		}
+		for (int i = 0; i < cnt; ++i) {
+			printf("%d:%s:%c:%s:", (*(sortDirector + i))->serialNumber, (*(sortDirector + i))->director->name, (*(sortDirector + i))->sex, (*(sortDirector + i))->birth->name);
+
+			(*(sortDirector + i))->titleCur = (*(sortDirector + i))->title;
+
+			printf("%s", (*(sortDirector + i))->titleCur->name);
+
+			while ((*(sortDirector + i))->titleCur->next != NULL)
+			{
+				(*(sortDirector + i))->titleCur = (*(sortDirector + i))->titleCur->next;
+				printf(", %s", (*(sortDirector + i))->titleCur->name);
+			}
+
+			printf("\n");
+		}
+
+		if (fileName != 0) {
+
+
+			sdp = fopen(fileName, "wt");
+
+			for (int i = 0; i < cnt; ++i) {
+				if (i == 3) {
+					directorCur = director;
+					for (int i = 0; i < cnt; ++i) {
+						*(sortDirector + i) = directorCur;
+
+						directorCur = directorCur->next;
+					}
+					if (option == 0)
+						qsort(sortDirector, cnt, sizeof(Director*), compareNameD);
+					else {
+						if (strcmp(option, "n") == 0)
+							qsort(sortDirector, cnt, sizeof(Director*), compareNameD);
+						else if (strcmp(option, "s") == 0)
+							qsort(sortDirector, cnt, sizeof(Director*), compareSexD);
+						else if (strcmp(option, "b") == 0)
+							qsort(sortDirector, cnt, sizeof(Director*), compareBirthD);
+						else if (strcmp(option, "m") == 0)
+							qsort(sortDirector, cnt, sizeof(Director*), compareMovieD);
+					}
+				}// for문 마지막에 주소 값이 변경되는 기이한 현상, 고로 하드코딩으로 대처..
+				fprintf(sdp, "%d:%s:%c:%s:", (*(sortDirector + i))->serialNumber, (*(sortDirector + i))->director->name, (*(sortDirector + i))->sex, (*(sortDirector + i))->birth->name);
+
+				(*(sortDirector + i))->titleCur = (*(sortDirector + i))->title;
+
+				fprintf(sdp, "%s", (*(sortDirector + i))->titleCur->name);
+
+				while ((*(sortDirector + i))->titleCur->next != NULL)
+				{
+					(*(sortDirector + i))->titleCur = (*(sortDirector + i))->titleCur->next;
+					fprintf(sdp, ", %s", (*(sortDirector + i))->titleCur->name);
+				}
+
+				fprintf(sdp, "\n");
+			}
+			fclose(sdp);
+		}
+
+	}//director일때
+	else if (strcmp(mda, "a") == 0) {
+		if (actor == NULL) {
+			printf("No such record!!\n");
+			return;
+		}
+		actorCur = actor;
+		while (actorCur != NULL) {
+			++cnt;
+			actorCur = actorCur->next;
+		}
+
+		actorCur = actor;
+		sortActor = (Actor**)malloc(cnt);
+
+		for (int i = 0; i < cnt; ++i) {
+			*(sortActor + i) = actorCur;
+
+			actorCur = actorCur->next;
+		}
+		if (option == 0)
+			qsort(sortActor, cnt, sizeof(Actor*), compareNameA);
+		else {
+			if (strcmp(option, "n") == 0)
+				qsort(sortActor, cnt, sizeof(Actor*), compareNameA);
+			else if (strcmp(option, "s") == 0)
+				qsort(sortActor, cnt, sizeof(Actor*), compareSexA);
+			else if (strcmp(option, "b") == 0)
+				qsort(sortActor, cnt, sizeof(Actor*), compareBirthA);
+			else if (strcmp(option, "m") == 0)
+				qsort(sortActor, cnt, sizeof(Actor*), compareMovieA);
+		}
+		for (int i = 0; i < cnt; ++i) {
+			printf("%d:%s:%c:%s:", (*(sortActor + i))->serialNumber, (*(sortActor + i))->actor->name, (*(sortActor + i))->sex, (*(sortActor + i))->birth->name);
+
+			(*(sortActor + i))->titleCur = (*(sortActor + i))->title;
+
+			printf("%s", (*(sortActor + i))->titleCur->name);
+
+			while ((*(sortActor + i))->titleCur->next != NULL)
+			{
+				(*(sortActor + i))->titleCur = (*(sortActor + i))->titleCur->next;
+				printf(", %s", (*(sortActor + i))->titleCur->name);
+			}
+
+			printf("\n");
+		}
+
+
+		if (fileName != 0) {
+
+
+			sap = fopen(fileName, "wt");
+			for (int i = 0; i < cnt; ++i) {
+				if (i == 3) {
+					actorCur = actor;
+					for (int i = 0; i < cnt; ++i) {
+						*(sortActor + i) = actorCur;
+
+						actorCur = actorCur->next;
+					}
+					if (option == 0)
+						qsort(sortActor, cnt, sizeof(Actor*), compareNameA);
+					else {
+						if (strcmp(option, "n") == 0)
+							qsort(sortActor, cnt, sizeof(Actor*), compareNameA);
+						else if (strcmp(option, "s") == 0)
+							qsort(sortActor, cnt, sizeof(Actor*), compareSexA);
+						else if (strcmp(option, "b") == 0)
+							qsort(sortActor, cnt, sizeof(Actor*), compareBirthA);
+						else if (strcmp(option, "m") == 0)
+							qsort(sortActor, cnt, sizeof(Actor*), compareMovieA);
+					}
+				}// for문 마지막에 주소 값이 변경되는 기이한 현상, 고로 하드코딩으로 대처..
+
+				fprintf(sap, "%d:%s:%c:%s:", (*(sortActor + i))->serialNumber, (*(sortActor + i))->actor->name, (*(sortActor + i))->sex, (*(sortActor + i))->birth->name);
+
+				(*(sortActor + i))->titleCur = (*(sortActor + i))->title;
+
+				fprintf(sap, "%s", (*(sortActor + i))->titleCur->name);
+
+				while ((*(sortActor + i))->titleCur->next != NULL)
+				{
+					(*(sortActor + i))->titleCur = (*(sortActor + i))->titleCur->next;
+					fprintf(sap, ", %s", (*(sortActor + i))->titleCur->name);
+				}
+
+				fprintf(sap, "\n");
+			}
+			fclose(sap);
+		}
+	}//Actor일때
 }
+
 
 int compareTitle(const void *a, const void *b)
 {
@@ -164,4 +347,60 @@ int compareActor(const void *a, const void *b)
 {
 	return(strcmp((*(const Movie**)a)->actor->name, (*(const Movie**)b)->actor->name));
 
+}
+int compareNameD(const void *a, const void *b)
+{
+
+	return(strcmp((*(const Director**)a)->director->name, (*(const Director**)b)->director->name));
+}
+int compareSexD(const void *a, const void *b)
+{
+	char sex1 = (*(const Director**)a)->sex;
+	char sex2 = (*(const Director**)b)->sex;
+
+	if (sex1 < sex2)
+		return -1;
+
+	if (sex1 > sex2)
+		return 1;
+
+	return 0;
+}
+int compareBirthD(const void *a, const void *b)
+{
+
+	return(strcmp((*(const Director**)a)->birth->name, (*(const Director**)b)->birth->name));
+}
+int compareMovieD(const void *a, const void *b)
+{
+
+	return(strcmp((*(const Director**)a)->title->name, (*(const Director**)b)->title->name));
+}
+int compareNameA(const void *a, const void *b)
+{
+
+	return(strcmp((*(const Actor**)a)->actor->name, (*(const Actor**)b)->actor->name));
+}
+int compareSexA(const void *a, const void *b)
+{
+	char sex1 = (*(const Actor**)a)->sex;
+	char sex2 = (*(const Actor**)b)->sex;
+
+	if (sex1 < sex2)
+		return -1;
+
+	if (sex1 > sex2)
+		return 1;
+
+	return 0;
+}
+int compareBirthA(const void *a, const void *b)
+{
+
+	return(strcmp((*(const Actor**)a)->birth->name, (*(const Actor**)b)->birth->name));
+}
+int compareMovieA(const void *a, const void *b)
+{
+
+	return(strcmp((*(const Actor**)a)->title->name, (*(const Actor**)b)->title->name));
 }
