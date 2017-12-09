@@ -987,6 +987,7 @@ void delete(char* mda, char* num) {
 			return;
 		}
 		else {
+
 			if (movieCur == movieTail && movieCur == movie)
 				movieTail = movie = NULL;
 			else if (movieCur != movieTail && movieCur == movie)
@@ -1002,7 +1003,11 @@ void delete(char* mda, char* num) {
 							break;
 					}
 				}//
-				movieBefore->next = movieCur->next;
+			if (movieCur == movieTail && movieCur != movie){
+											movieTail = movieBefore;
+											movieBefore->next = NULL;}
+			else {
+				movieBefore->next = movieCur->next;}
 			}
 			//
 			singleData * delActor = movieCur->actor;
@@ -1064,7 +1069,11 @@ void delete(char* mda, char* num) {
 							break;
 					}
 				}//
-				directorBefore->next = directorCur->next;
+				if (directorCur == directorTail && directorCur != director){
+												directorTail = directorBefore;
+												directorBefore->next = NULL;}
+				else {
+					directorBefore->next = directorCur->next;}
 			}
 			//
 			singleData * deltitle = directorCur->title;
@@ -1125,7 +1134,11 @@ void delete(char* mda, char* num) {
 							break;
 					}
 				}//
-				actorBefore->next = actorCur->next;
+				if (actorCur == actorTail && actorCur != actor){
+												actorTail = actorBefore;
+												actorBefore->next = NULL;}
+				else {
+					actorBefore->next = actorCur->next;}
 			}
 			//
 			singleData * deltitle = actorCur->title;
