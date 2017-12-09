@@ -1117,18 +1117,19 @@ void linkAnotherMovie(void) {
 	if(check == 0)
 			movieCur->director->linkAnotherD = NULL;
 	check = 0;
-	if (actor != NULL) {
-		movieCur->actorCur = movieCur->actor;
+	movieCur->actorCur = movieCur->actor;
 
-		if (movieCur->actorCur->next != NULL)
+	if (movieCur->actorCur->next != NULL)
+		++actorCurCnt;
+	movieCur->actorCur = movieCur->actorCur->next;
+	if (actorCurCnt > 0) {
+		while (movieCur->actorCur->next != NULL) {
+			movieCur->actorCur = movieCur->actorCur->next;
 			++actorCurCnt;
-		movieCur->actorCur = movieCur->actorCur->next;
-		if (actorCurCnt > 0) {
-			while (movieCur->actorCur->next != NULL) {
-				movieCur->actorCur = movieCur->actorCur->next;
-				++actorCurCnt;
-			}
 		}
+	}
+
+	if (actor != NULL) {
 
 		movieCur->actorCur = movieCur->actor;
 
@@ -1150,6 +1151,13 @@ void linkAnotherMovie(void) {
 			check = 0;
 			movieCur->actorCur = movieCur->actorCur->next;
 			actorCur = actor;
+		}
+	}
+	else{
+		movieCur->actorCur = movieCur->actor;
+		for (int i = 0; i <= actorCurCnt; ++i) {
+			movieCur->actorCur->linkAnotherA = NULL;
+			movieCur->actorCur = movieCur->actorCur->next;
 		}
 	}
 
@@ -1179,21 +1187,20 @@ void linkAnotherMovie(void) {
 		if(check == 0)
 				movieCur->director->linkAnotherD = NULL;
 		check = 0;
+		movieCur->actorCur = movieCur->actor;
 
-		if (actor != NULL) {
-			movieCur->actorCur = movieCur->actor;
-
-			if (movieCur->actorCur->next != NULL)
+		if (movieCur->actorCur->next != NULL)
+			++actorCurCnt;
+		movieCur->actorCur = movieCur->actorCur->next;
+		if (actorCurCnt > 0) {
+			while (movieCur->actorCur->next != NULL) {
+				movieCur->actorCur = movieCur->actorCur->next;
 				++actorCurCnt;
-			movieCur->actorCur = movieCur->actorCur->next;
-			if (actorCurCnt > 0) {
-				while (movieCur->actorCur->next != NULL) {
-					movieCur->actorCur = movieCur->actorCur->next;
-					++actorCurCnt;
-				}
 			}
-			movieCur->actorCur = movieCur->actor;
+		}
+		if (actor != NULL) {
 
+			movieCur->actorCur = movieCur->actor;
 
 			for (int i = 0; i <= actorCurCnt; ++i) {
 				if (strcmp(movieCur->actorCur->name, actorCur->actor->name) == 0){
@@ -1214,6 +1221,14 @@ void linkAnotherMovie(void) {
 				actorCur = actor;
 			}
 
+			actorCurCnt = 0;
+		}
+		else{
+			movieCur->actorCur = movieCur->actor;
+			for (int i = 0; i <= actorCurCnt; ++i) {
+				movieCur->actorCur->linkAnotherA = NULL;
+				movieCur->actorCur = movieCur->actorCur->next;
+			}
 			actorCurCnt = 0;
 		}
 	}

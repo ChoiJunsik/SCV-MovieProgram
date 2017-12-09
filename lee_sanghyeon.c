@@ -259,13 +259,12 @@ void update(char* mda, char* option, char* num) {
 							movieNew->actorCur = movieNew->actorCur->next;
 							fprintf(mp, ", %s", changeColon(movieNew->actorCur->name));
 						}
-						fprintf(mp, "\n");
 					}
 					else ++cnt;
 				}
 				if (cnt == optLen - 1)
 					fprintf(mp, ":=");
-
+				fprintf(mp, "\n");
 				puts("@@ Done");
 				free(tmpTitle);
 				free(tmpGenre);
@@ -337,13 +336,12 @@ void update(char* mda, char* option, char* num) {
 						movieNew->actorCur = movieNew->actorCur->next;
 						fprintf(mp, ", %s", changeColon(movieNew->actorCur->name));
 					}
-					fprintf(mp, "\n");
 				}
 				else ++cnt;
 			}
 			if (cnt == optLen - 1)
 				fprintf(mp, ":=");
-
+			fprintf(mp, "\n");
 			puts("@@ Done");
 			free(tmpTitle);
 			free(tmpGenre);
@@ -574,12 +572,12 @@ void update(char* mda, char* option, char* num) {
 							directorNew->titleCur = directorNew->titleCur->next;
 							fprintf(dp, ", %s", changeColon(directorNew->titleCur->name));
 						}
-						fprintf(dp, "\n");
 					}
 					else ++cnt;
 				}
 				if (cnt == optLen - 1)
 					fprintf(dp, ":=");
+				fprintf(dp, "\n");
 				cnt = 0;
 
 				puts("@@ Done");
@@ -636,12 +634,12 @@ void update(char* mda, char* option, char* num) {
 						directorNew->titleCur = directorNew->titleCur->next;
 						fprintf(dp, ", %s", changeColon(directorNew->titleCur->name));
 					}
-					fprintf(dp, "\n");
 				}
 				else ++cnt;
 			}
 			if (cnt == optLen - 1)
 				fprintf(dp, ":=");
+			fprintf(dp, "\n");
 			cnt = 0;
 			puts("@@ Done");
 			free(tmpBirth);
@@ -872,12 +870,12 @@ void update(char* mda, char* option, char* num) {
 							actorNew->titleCur = actorNew->titleCur->next;
 							fprintf(ap, ", %s", changeColon(actorNew->titleCur->name));
 						}
-						fprintf(ap, "\n");
 					}
 					else ++cnt;
 				}
 				if (cnt == optLen - 1)
 					fprintf(ap, ":=");
+				fprintf(ap, "\n");
 				cnt = 0;
 
 				puts("@@ Done");
@@ -934,12 +932,12 @@ void update(char* mda, char* option, char* num) {
 						actorNew->titleCur = actorNew->titleCur->next;
 						fprintf(ap, ", %s", changeColon(actorNew->titleCur->name));
 					}
-					fprintf(ap, "\n");
 				}
 				else ++cnt;
 			}
 			if (cnt == optLen - 1)
 				fprintf(ap, ":=");
+			fprintf(ap, "\n");
 			cnt = 0;
 			puts("@@ Done");
 			free(tmpBirth);
